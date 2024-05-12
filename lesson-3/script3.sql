@@ -5,6 +5,23 @@
 ALTER TABLE AlbumsSongs ADD orderNo INT NOT NULL DEFAULT 0;
 SHOW CREATE TABLE AlbumsSongs;
 
+WITH RankedSongs AS (
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY albumId ASC, songId ASC) AS rowNumber,
+        albumId,
+        songId,
+        orderNo
+    FROM AlbumSongs
+)
+UPDATE AlbumSongs AS a
+SET a.orderNo = r.rowNumber
+FROM RandkedSongs AS r
+WHERE a.albumId = r.albumId AND a.songId = r.songId;
+
+/*
+The above single UPDATE request is used instead of multiply UPDATEs below.
+Tnanks to https://github.com/brown-aleks for PR.
+
 UPDATE AlbumsSongs SET orderNo = 1 WHERE albumId = 1 AND songId = 1;
 UPDATE AlbumsSongs SET orderNo = 2 WHERE albumId = 1 AND songId = 2;
 UPDATE AlbumsSongs SET orderNo = 3 WHERE albumId = 1 AND songId = 3;
@@ -64,6 +81,7 @@ UPDATE AlbumsSongs SET orderNo = 7 WHERE albumId = 8 AND songId = 44;
 UPDATE AlbumsSongs SET orderNo = 8 WHERE albumId = 8 AND songId = 45;
 UPDATE AlbumsSongs SET orderNo = 9 WHERE albumId = 8 AND songId = 46;
 UPDATE AlbumsSongs SET orderNo = 10 WHERE albumId = 8 AND songId = 47;
+*/
 
 ALTER TABLE AlbumsSongs ALTER orderNo DROP DEFAULT;
 SHOW CREATE TABLE AlbumsSongs;
