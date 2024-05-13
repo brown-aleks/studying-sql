@@ -11,8 +11,7 @@ WITH RankedSongs AS (
         albumId,
         songId,
         orderNo
-    FROM
-        AlbumSongs
+    FROM AlbumSongs
 )
 UPDATE AlbumSongs AS A
 SET
