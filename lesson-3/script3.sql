@@ -5,27 +5,23 @@
 ALTER TABLE AlbumsSongs ADD orderNo INT NOT NULL DEFAULT 0;
 SHOW CREATE TABLE AlbumsSongs;
 
-WITH RANKED_SONGS AS (
+WITH RankedSongs AS (
     SELECT
-        ROW_NUMBER() OVER (
-            PARTITION BY ALBUMID
-            ORDER BY
-                SONGID ASC
-        ) AS ROW_NUM,
-        ALBUMID,
-        SONGID,
-        ORDERNO
+        ROW_NUMBER() OVER (PARTITION BY albumId ORDER BY songId ASC) AS rowNumber,
+        albumId,
+        songId,
+        orderNo
     FROM
-        ALBUMSSONGS
+        AlbumSongs
 )
-UPDATE ALBUMSSONGS AS A
+UPDATE AlbumSongs AS A
 SET
-    ORDERNO = R.ROW_NUM
+    orderNo = R.rowNumber
 FROM
-    RANKED_SONGS AS R
+    RankedSongs AS R
 WHERE
-    A.ALBUMID = R.ALBUMID
-    AND A.SONGID = R.SONGID;
+    A.albumId = R.albumId
+    AND A.orderNo = R.orderNo;
 
 /*
 The above single UPDATE request is used instead of multiply UPDATEs below.
