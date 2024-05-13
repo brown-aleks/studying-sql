@@ -14,13 +14,9 @@ WITH RankedSongs AS (
     FROM AlbumSongs
 )
 UPDATE AlbumSongs AS A
-SET
-    orderNo = R.rowNumber
-FROM
-    RankedSongs AS R
-WHERE
-    A.albumId = R.albumId
-    AND A.orderNo = R.orderNo;
+SET orderNo = R.rowNumber
+FROM RankedSongs AS R
+WHERE A.albumId = R.albumId AND A.orderNo = R.orderNo;
 
 /*
 The above single UPDATE request is used instead of multiply UPDATEs below.
